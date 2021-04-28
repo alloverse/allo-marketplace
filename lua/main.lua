@@ -23,14 +23,20 @@ class.AppView(View)
 function AppView:_init(bounds, appName)
     self:super(bounds)
     local iconAsset = assets[appName]
-    self.icon = self:addSubview(
-        ui.Asset.View(iconAsset, 
-            ui.Bounds{size=bounds.size:copy()}
-                :move(0, 0, 0.05)
+    function makeIcon()
+        self.icon = self:addSubview(
+            ui.Asset.View(iconAsset, 
+                ui.Bounds{size=bounds.size:copy()}
+                    :move(0, 0, 0.05)
+            )
         )
-    )
-    self.icon.color = {0.5, 0.2, 0.5, 1.0}
-    self.icon:setGrabbable(true, {target_hand_transform= mat4.identity()})
+        self.icon.color = {0.5, 0.2, 0.5, 1.0}
+        self.icon:setGrabbable(true, {target_hand_transform= mat4.identity()})
+        self.icon.onGrabStarted = function()
+            makeIcon()
+        end
+    end
+    makeIcon()
     self.brick = self:addSubview(ui.Cube(
         ui.Bounds{size=bounds.size:copy()}
         :insetEdges(0.05, 0.05, 0.05, 0.05, 0.00, 0.05)
