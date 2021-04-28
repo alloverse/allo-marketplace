@@ -29,8 +29,8 @@ function AppView:_init(bounds, appName)
                 :move(0, 0, 0.05)
         )
     )
-    self.icon.transform = mat4.scale(mat4.identity(), mat4.identity(), vec3(0.25, 0.25, 0.25))
     self.icon.color = {0.5, 0.2, 0.5, 1.0}
+    self.icon:setGrabbable(true, {target_hand_transform= mat4.identity()})
     self.brick = self:addSubview(ui.Cube(
         ui.Bounds{size=bounds.size:copy()}
         :insetEdges(0.05, 0.05, 0.05, 0.05, 0.00, 0.05)
