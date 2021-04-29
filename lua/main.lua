@@ -22,21 +22,10 @@ app.assetManager:add(assets)
 class.AppView(View)
 function AppView:_init(bounds, appName)
     self:super(bounds)
-    local iconAsset = assets[appName]
-    function makeIcon()
-        self.icon = self:addSubview(
-            ui.Asset.View(iconAsset, 
-                ui.Bounds{size=bounds.size:copy()}
-                    :move(0, 0, 0.05)
-            )
-        )
-        self.icon.color = {0.5, 0.2, 0.5, 1.0}
-        self.icon:setGrabbable(true, {target_hand_transform= mat4.identity()})
-        self.icon.onGrabStarted = function()
-            makeIcon()
-        end
-    end
-    makeIcon()
+    self.appName = appName
+    self.iconAsset = assets[appName]
+    self:makeIcon()
+
     self.brick = self:addSubview(ui.Cube(
         ui.Bounds{size=bounds.size:copy()}
         :insetEdges(0.05, 0.05, 0.05, 0.05, 0.00, 0.05)
@@ -53,7 +42,29 @@ function AppView:_init(bounds, appName)
     )
 end
 
-local mainView = Frame(ui.Bounds(0, 1.6, -2,   1.5, 0.8, 0.06), 0.03)
+function AppView:makeIcon()
+    self.icon = ui.Asset.View(self.iconAsset, 
+        ui.Bounds{size=self.bounds.size:copy()}
+            :move(0, 0, 0.05)
+    )
+    self.icon.color = {0.5, 0.2, 0.5, 1.0}
+    self.icon:setGrabbable(true, {target_hand_transform= mat4.identity()})
+    self.icon.onGrabStarted = function()
+        self:makeIcon()
+    end
+    self.icon.onGrabEnded = function(oldIcon)
+        oldIcon:removeFromSuperview()
+        self:launchApp()
+    end
+    self:addSubview(self.icon)
+end
+
+function AppView:launchApp()
+
+end
+
+
+local mainView = Frame(ui.Bounds(-3, 1.6, -2,   1.5, 0.8, 0.06), 0.03)
 mainView.grabbable = true
 
 local titleLabel = mainView:addSubview(ui.Label{
