@@ -18,8 +18,8 @@ end
 local app = App(client)
 
 local apps = {}
-local p = io.popen('find apps/* -maxdepth 0')  --Open directory look for files, save data in p. By giving '-type f' as parameter, it returns all files.     
-for appPath in p:lines() do                         --Loop through all files
+local p = io.popen('find apps/* -maxdepth 0')
+for appPath in p:lines() do
     print("App: "..appPath)
     local desc = {
         path=appPath,
@@ -70,14 +70,18 @@ function AppView:makeIcon()
         self:makeIcon()
     end
     self.icon.onGrabEnded = function(oldIcon)
+        local m_at = oldIcon.entity.components.transform:transformFromWorld()
+        local v_at = m_at * vec3(0,0,-0.5)
+        self:launchApp(v_at)
         oldIcon:removeFromSuperview()
-        self:launchApp()
     end
     self:addSubview(self.icon)
 end
 
-function AppView:launchApp()
-
+function AppView:launchApp(pos)
+    local command = 'cd '..self.desc.path..'; ./allo/assist run '..arg[2]..' "'..tostring(pos)..'" &'
+    print("Launching app "..command)
+    os.execute(command)
 end
 
 
