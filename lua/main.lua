@@ -1,5 +1,6 @@
 local vec3 = require("modules.vec3")
 local mat4 = require("modules.mat4")
+local json = require "allo.json"
 local Frame = require("frame")
 
 local client = Client(
@@ -7,23 +8,39 @@ local client = Client(
     "allo-marketplace"
 )
 
-local appNames = {"clock", "drawing-board", "fileviewer", "house", "jukebox"}
-
+function readfile(path)
+    local f = io.open(path, "r")
+    local s = f:read("*a")
+    f:close()
+    return s
+end
 
 local app = App(client)
+
+local apps = {}
+local p = io.popen('find apps/* -maxdepth 0')  --Open directory look for files, save data in p. By giving '-type f' as parameter, it returns all files.     
+for appPath in p:lines() do                         --Loop through all files
+    print("App: "..appPath)
+    local desc = {
+        path=appPath,
+        meta= json.decode(readfile(appPath.."/info.json")),
+        icon= ui.Asset.File(appPath.."/icon.glb")
+    }
+    table.insert(apps, desc)
+    app.assetManager:add(desc.icon)
+end
+p:close()
+
+
 assets = {
     quit = ui.Asset.File("images/quit.png"),
 }
-for _, n in ipairs(appNames) do 
-    assets[n] = ui.Asset.File("models/"..n..".glb")
-end
 app.assetManager:add(assets)
 
 class.AppView(View)
-function AppView:_init(bounds, appName)
+function AppView:_init(bounds, desc)
     self:super(bounds)
-    self.appName = appName
-    self.iconAsset = assets[appName]
+    self.desc = desc
     self:makeIcon()
 
     self.brick = self:addSubview(ui.Cube(
@@ -36,14 +53,14 @@ function AppView:_init(bounds, appName)
         ui.Label{
             bounds= ui.Bounds(0, 0, 0,   bounds.size.width, 0.05, 0.01)
                 :move(0, -bounds.size.height/2 + 0.08, 0),
-            text= appName,
+            text= self.desc.meta.display_name,
             color = {1, 1, 1, 1}
         }
     )
 end
 
 function AppView:makeIcon()
-    self.icon = ui.Asset.View(self.iconAsset, 
+    self.icon = ui.Asset.View(self.desc.icon, 
         ui.Bounds{size=self.bounds.size:copy()}
             :move(0, 0, 0.05)
     )
@@ -82,9 +99,9 @@ local grid = mainView:addSubview(
 local itemSize = mainView.bounds.size:copy()
 itemSize.width = itemSize.width / 3
 itemSize.height = itemSize.height / 2 
-for _, name in ipairs(appNames) do
+for _, desc in ipairs(apps) do
     local appView = grid:addSubview(
-        AppView(ui.Bounds{size=itemSize:copy()}, name)
+        AppView(ui.Bounds{size=itemSize:copy()}, desc)
     )
 end
 grid:layout()
