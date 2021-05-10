@@ -11,6 +11,7 @@ declare -a APP_REPOS=(
 
 HERE=`dirname $0`
 
+mkdir -p $HERE/apps
 pushd $HERE/apps
 
 for REPO in "${APP_REPOS[@]}"; do
