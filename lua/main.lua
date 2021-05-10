@@ -60,9 +60,10 @@ function AppView:_init(bounds, desc)
 end
 
 function AppView:makeIcon()
-    self.icon = ui.Asset.View(self.desc.icon, 
+    self.icon = ui.ModelView(
         ui.Bounds{size=self.bounds.size:copy()}
-            :move(0, 0, 0.05)
+            :move(0, 0, 0.05),
+            self.desc.icon
     )
     self.icon.color = {0.5, 0.2, 0.5, 1.0}
     self.icon:setGrabbable(true, {target_hand_transform= mat4.identity()})
@@ -85,15 +86,29 @@ function AppView:launchApp(pos)
 end
 
 
-local mainView = Frame(ui.Bounds(-3, 1.6, -2,   1.5, 0.8, 0.06), 0.03)
+local mainView = Frame(
+    ui.Bounds(0,0,0, 1.5, 0.8, 0.06)
+        :rotate(3.14159/2, 0,1,0)
+        :move(-3, 1.6, 0.5),
+    0.03
+)
 mainView.grabbable = true
 
 local titleLabel = mainView:addSubview(ui.Label{
     bounds= ui.Bounds{size=ui.Size(1.5,0.10,0.01)}
         :move( mainView.bounds.size:getEdge("top", "center", "back") )
         :move( 0, 0.06, 0),
-    text= "Alloverse Marketplace",
+    text= "Alloverse App Market",
     halign= "left",
+})
+
+local helpLabel = mainView:addSubview(ui.Label{
+    bounds= ui.Bounds{size=ui.Size(1.5,0.06,0.01)}
+        :move( mainView.bounds.size:getEdge("bottom", "center", "back") )
+        :move( 0, -0.10, 0),
+    text= "Grab an app (grip button or right mouse button) and drop it somewhere to start it.",
+    halign= "left",
+    color={0.6, 0.6, 0.6, 1}
 })
 
 local grid = mainView:addSubview(
