@@ -72,8 +72,8 @@ function AppView:makeIcon()
     end
     self.icon.onGrabEnded = function(oldIcon)
         local m_at = oldIcon.entity.components.transform:transformFromWorld()
-        local v_at = m_at * vec3(0,0,-0.5)
-        self:launchApp(v_at)
+        mat4.translate(m_at, m_at, vec3(0, 0, -0.5))
+        self:launchApp(m_at)
         oldIcon:removeFromSuperview()
     end
     self:addSubview(self.icon)
