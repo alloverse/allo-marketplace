@@ -4,4 +4,3 @@ allo/**/*.bundle
 allo/**/*.so
 allo/**/allonet.cache
 allo/**/builds.json
-apps/*

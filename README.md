@@ -1,31 +1,23 @@
-# Alloverse app template
+# Alloverse Marketplace
 
-This is an Alloverse app. You can 
-[read about making apps](https://alloverse.com/develop-apps/)
-on Alloverse's website.
+This is the Marketplace app which lets you start other Alloverse apps. The Marketplace
+is started automatically in all Alloplaces, so users can start apps and have functionality
+in their Places.
 
-__psst, you should summarize and explain your project here!__
+The idea is that you'll be able to register and publish your app on my.alloverse.com,
+and they'll automatically show up in Marketplace.
 
-## Developing
+Until that functionality exists, apps need to be submoduled into the apps/ directory
+in this repo.
 
-Application sources are in `lua/`.
+## Utilities
 
-To start the app and connect it to an Alloplace for testing, run
+### `bootstrap.sh`
 
-```
-./allo/assist run alloplace://nevyn.places.alloverse.com
-```
+Run this to ./allo/assist fetch in all the apps. You need to do this to be able
+to start the apps.
 
-## Documentation
+### `bump-apps.sh`
 
-We're still working on setting up a comprehensive documentation web site. Some initial documentation
-is provided in your `lua/main.lua`.
-
-The implementation of the UI library has documentation inline which you can use while we're
-working on the docs website. Navigate to `allo/deps/alloui/lua/alloui` and have a look at the various
-lua files in there, and in particular the various UI elements under `views`. Some various views include:
-
-* Surface, a flat surface to put stuff on
-* Label, for displaying text
-* Button, for clicking on
-* Navstack, for drilling into nested data
+Do a cd $app; git pull; cd ..; git add $app for every app in apps/, effectively
+updating them all to the latest version.

@@ -4,3 +4,18 @@
 [submodule "allo/deps/luajit-bin"]
 	path = allo/deps/luajit-bin
 	url = https://github.com/luapower/luajit.git
+[submodule "apps/allo-house"]
+	path = apps/allo-house
+	url = https://github.com/alloverse/allo-house
+[submodule "apps/allo-clock"]
+	path = apps/allo-clock
+	url = https://github.com/alloverse/allo-clock
+[submodule "apps/allo-jukebox"]
+	path = apps/allo-jukebox
+	url = https://github.com/alloverse/allo-jukebox
+[submodule "apps/allo-whiteboard"]
+	path = apps/allo-whiteboard
+	url = https://github.com/alloverse/allo-whiteboard
+[submodule "apps/allo-fileviewer"]
+	path = apps/allo-fileviewer
+	url = https://github.com/alloverse/allo-fileviewer
