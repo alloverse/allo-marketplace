@@ -11,6 +11,7 @@ for APP in `ls`; do
     echo "# Bootstrapping $APP."
     cd $APP
     ./allo/assist fetch
+    git lfs pull
     cd ..
 done
 
