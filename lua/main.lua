@@ -67,12 +67,15 @@ function AppView:_init(bounds, desc)
 end
 
 function AppView:makeIcon()
-    self.icon = ui.ModelView(
-        ui.Bounds{size=self.bounds.size:copy()}
-            :move(0, 0, 0.05),
-            self.desc.icon
+    self.icon = ui.View(
+        ui.Bounds{size=self.bounds.size:copy()}:move(0, 0, 0.05)
     )
-    self.icon.color = {0.5, 0.2, 0.5, 1.0}
+    self.iconModel = self.icon:addSubview(ui.ModelView(
+        ui.Bounds{size=self.bounds.size:copy()},
+        self.desc.icon
+    ))
+
+    self.iconModel.color = {0.5, 0.2, 0.5, 1.0}
     self.icon:setPointable(true)
     self.icon:setGrabbable(true, {target_hand_transform= mat4.identity()})
     self.icon.onGrabStarted = function()
@@ -85,7 +88,7 @@ function AppView:makeIcon()
         oldIcon:removeFromSuperview()
     end
     self.icon.onPointerEntered = function()
-        self.spinAnim = self.icon:addPropertyAnimation(ui.PropertyAnimation{
+        self.spinAnim = self.iconModel:addPropertyAnimation(ui.PropertyAnimation{
             path= "transform.matrix.rotation.y",
             from= 0,
             to=   3.14159*2,
@@ -96,7 +99,7 @@ function AppView:makeIcon()
     self.icon.onPointerExited = function()
         if self.spinAnim then
             self.spinAnim:removeFromView()
-            self.icon:setBounds()
+            self.iconModel:setBounds()
             self.spinAnim = nil
         end
     end
