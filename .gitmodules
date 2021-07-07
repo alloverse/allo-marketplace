@@ -19,3 +19,6 @@
 [submodule "apps/allo-fileviewer"]
 	path = apps/allo-fileviewer
 	url = https://github.com/alloverse/allo-fileviewer
+[submodule "apps/allo-arrows"]
+	path = apps/allo-arrows
+	url = git@github.com:alloverse/allo-arrows.git
