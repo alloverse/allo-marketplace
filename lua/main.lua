@@ -23,14 +23,14 @@ local p = io.popen('find apps/* -maxdepth 0')
 for appPath in p:lines() do
     local infojsonstr = readfile(appPath.."/info.json")
     if infojsonstr then
-    local desc = {
-        path=appPath,
+        local desc = {
+            path=appPath,
             meta= json.decode(infojsonstr),
-        icon= ui.Asset.File(appPath.."/icon.glb")
-    }
+            icon= ui.Asset.File(appPath.."/icon.glb")
+        }
         print("Marketplace adding app '"..desc.meta.display_name.."' from "..appPath)
-    table.insert(apps, desc)
-    app.assetManager:add(desc.icon)
+        table.insert(apps, desc)
+        app.assetManager:add(desc.icon)
     else
         print("Marketplace skipping un-meta'd app "..appPath)
     end
@@ -57,10 +57,11 @@ function AppView:_init(bounds, desc)
     self.brick.color = {0.9, 0.4, 0.3, 0.3}
     self.label = self:addSubview(
         ui.Label{
-            bounds= ui.Bounds(0, 0, 0,   bounds.size.width, 0.05, 0.01)
+            bounds= ui.Bounds(0, 0, 0,   bounds.size.width, 0.04, 0.01)
                 :move(0, -bounds.size.height/2 + 0.08, 0),
             text= self.desc.meta.display_name,
-            color = {1, 1, 1, 1}
+            color = {1, 1, 1, 1},
+            fitToWidth = true
         }
     )
 end
@@ -72,6 +73,7 @@ function AppView:makeIcon()
             self.desc.icon
     )
     self.icon.color = {0.5, 0.2, 0.5, 1.0}
+    self.icon:setPointable(true)
     self.icon:setGrabbable(true, {target_hand_transform= mat4.identity()})
     self.icon.onGrabStarted = function()
         self:makeIcon()
@@ -82,6 +84,22 @@ function AppView:makeIcon()
         self:launchApp(m_at)
         oldIcon:removeFromSuperview()
     end
+    self.icon.onPointerEntered = function()
+        self.spinAnim = self.icon:addPropertyAnimation(ui.PropertyAnimation{
+            path= "transform.matrix.rotation.y",
+            from= 0,
+            to=   3.14159*2,
+            duration = 6.0,
+            repeats= true,
+      })
+    end
+    self.icon.onPointerExited = function()
+        if self.spinAnim then
+            self.spinAnim:removeFromView()
+            self.icon:setBounds()
+            self.spinAnim = nil
+        end
+    end
     self:addSubview(self.icon)
 end
 
@@ -90,7 +108,6 @@ function AppView:launchApp(pos)
     print("Launching app "..command)
     os.execute(command)
 end
-
 
 local mainView = Frame(
     ui.Bounds(0,0,0, 1.5, 0.8, 0.06)
@@ -118,12 +135,13 @@ local helpLabel = mainView:addSubview(ui.Label{
 })
 
 local grid = mainView:addSubview(
-    ui.GridView(ui.Bounds{size=mainView.bounds.size:copy()})
+    ui.GridView(ui.Bounds{size=mainView.bounds.size:copy()}:insetEdges(0.06, 0.06, 0.06, 0.06, 0, 0))
 )
 
-local itemSize = mainView.bounds.size:copy()
+local itemSize = grid.bounds.size:copy()
 itemSize.width = itemSize.width / 3
 itemSize.height = itemSize.height / 2 
+
 for _, desc in ipairs(apps) do
     local appView = grid:addSubview(
         AppView(ui.Bounds{size=itemSize:copy()}, desc)
