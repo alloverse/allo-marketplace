@@ -10,6 +10,7 @@ local client = Client(
 
 function readfile(path)
     local f = io.open(path, "r")
+    if not f then return nil end
     local s = f:read("*a")
     f:close()
     return s
@@ -20,14 +21,19 @@ local app = App(client)
 local apps = {}
 local p = io.popen('find apps/* -maxdepth 0')
 for appPath in p:lines() do
-    print("App: "..appPath)
+    local infojsonstr = readfile(appPath.."/info.json")
+    if infojsonstr then
     local desc = {
         path=appPath,
-        meta= json.decode(readfile(appPath.."/info.json")),
+            meta= json.decode(infojsonstr),
         icon= ui.Asset.File(appPath.."/icon.glb")
     }
+        print("Marketplace adding app '"..desc.meta.display_name.."' from "..appPath)
     table.insert(apps, desc)
     app.assetManager:add(desc.icon)
+    else
+        print("Marketplace skipping un-meta'd app "..appPath)
+    end
 end
 p:close()
 
