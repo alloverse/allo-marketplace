@@ -21,4 +21,7 @@
 	url = https://github.com/alloverse/allo-fileviewer
 [submodule "apps/allo-arrows"]
 	path = apps/allo-arrows
-	url = git@github.com:alloverse/allo-arrows.git
+	url = https://github.com/alloverse/allo-arrows.git
+[submodule "apps/allo-confetti"]
+	path = apps/allo-confetti
+	url = https://github.com/alloverse/allo-confetti.git

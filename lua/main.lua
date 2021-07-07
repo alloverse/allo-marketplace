@@ -112,8 +112,10 @@ function AppView:launchApp(pos)
     os.execute(command)
 end
 
+local columnCount = 3
+local rowCount = math.ceil(#apps/columnCount)
 local mainView = Frame(
-    ui.Bounds(0,0,0, 1.5, 0.8, 0.06)
+    ui.Bounds(0,0,0, 1.5, rowCount*0.4, 0.06)
         :rotate(3.14159/2, 0,1,0)
         :move(-3, 1.6, 0.5),
     0.03
@@ -142,8 +144,8 @@ local grid = mainView:addSubview(
 )
 
 local itemSize = grid.bounds.size:copy()
-itemSize.width = itemSize.width / 3
-itemSize.height = itemSize.height / 2 
+itemSize.width = itemSize.width / columnCount
+itemSize.height = itemSize.height / rowCount
 
 for _, desc in ipairs(apps) do
     local appView = grid:addSubview(
