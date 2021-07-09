@@ -88,6 +88,8 @@ function AppView:makeIcon()
         oldIcon:removeFromSuperview()
     end
     self.icon.onPointerEntered = function()
+        -- disable because it keeps getting triggered without a corresponding onPointerEnded (which is a bug in alloui or visor)
+        if true then return end
         self.spinAnim = self.iconModel:addPropertyAnimation(ui.PropertyAnimation{
             path= "transform.matrix.rotation.y",
             from= 0,
