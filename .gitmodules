@@ -31,3 +31,9 @@
 [submodule "apps/allo-cloud-generator"]
 	path = apps/allo-cloud-generator
 	url = https://github.com/dmjezewska/allo-cloud-generator
+[submodule "apps/decorator"]
+	path = apps/allo-decorator
+	url = https://github.com/alloverse/allo-decorator.git
+[submodule "apps/modelviewer"]
+	path = apps/allo-modelviewer
+	url = https://github.com/alloverse/allo-assets.git

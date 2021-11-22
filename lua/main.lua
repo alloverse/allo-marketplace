@@ -57,10 +57,11 @@ end
 
 
 
-local columnCount = 3
+local columnCount = 4
+local frameWidth = 2.0
 local rowCount = math.ceil(#apps/columnCount)
 local mainView = Frame(
-    ui.Bounds(0,0,0, 1.5, rowCount*0.4, 0.06)
+    ui.Bounds(0,0,0, frameWidth, rowCount*0.4, 0.06)
         :rotate(3.14159/2, 0,1,0)
         :move(-3, 1.6, 0.5),
     0.03
@@ -68,7 +69,7 @@ local mainView = Frame(
 mainView.grabbable = true
 
 local titleLabel = mainView:addSubview(ui.Label{
-    bounds= ui.Bounds{size=ui.Size(1.5,0.10,0.01)}
+    bounds= ui.Bounds{size=ui.Size(frameWidth,0.10,0.01)}
         :move( mainView.bounds.size:getEdge("top", "center", "back") )
         :move( 0, 0.06, 0),
     text= "Alloverse App Market",
@@ -76,10 +77,10 @@ local titleLabel = mainView:addSubview(ui.Label{
 })
 
 local helpLabel = mainView:addSubview(ui.Label{
-    bounds= ui.Bounds{size=ui.Size(1.5,0.06,0.01)}
+    bounds= ui.Bounds{size=ui.Size(frameWidth,0.06,0.01)}
         :move( mainView.bounds.size:getEdge("bottom", "center", "back") )
         :move( 0, -0.10, 0),
-    text= "Grab an app (grip button or right mouse button) and drop it somewhere to start it.",
+    text= "Grab an app (grip button or right mouse button)\n and drop it somewhere to start it.",
     halign= "left",
     color={0.6, 0.6, 0.6, 1}
 })
