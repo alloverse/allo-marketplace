@@ -67,6 +67,7 @@ local mainView = Frame(
     0.03
 )
 mainView.grabbable = true
+mainView:setColor(ui.Color.alloDarkPink())
 
 local titleLabel = mainView:addSubview(ui.Label{
     bounds= ui.Bounds{size=ui.Size(frameWidth,0.10,0.01)}
