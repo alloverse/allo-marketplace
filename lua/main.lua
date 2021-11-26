@@ -53,6 +53,7 @@ function AppView:onIconDropped(pos)
     local command = 'cd '..self.desc.path..'; ./allo/assist run '..arg[2]..' "'..tostring(pos)..'" &'
     print("Launching app "..command)
     os.execute(command)
+    return true
 end
 
 
