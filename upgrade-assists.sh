@@ -1,6 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
+# Usage: update assist in jukebox, then run this script
+
+cp apps/allo-jukebox/allo/assist allo/
+cp apps/allo-jukebox/allo/assist.lua allo/
+cp apps/allo-jukebox/allo/boot.lua allo/
+
 ./allo/assist upgrade
 cd allo/deps/alloui
 git checkout main
@@ -12,12 +18,15 @@ pushd apps
 
 for APP in `ls`; do
     cd $APP
-    echo "Bumping alloui and allonet in $APP"
+    echo "Bumping assist, alloui and allonet in $APP"
     git checkout -f main
     git pull
     git submodule sync
     git submodule update --init --recursive
     git lfs pull
+    cp ../allo-jukebox/allo/assist allo/
+    cp ../allo-jukebox/allo/assist.lua allo/
+    cp ../allo-jukebox/allo/boot.lua allo/
     ./allo/assist upgrade
     cd allo/deps/alloui
     git checkout main
@@ -26,7 +35,8 @@ for APP in `ls`; do
     cd ../../..
     git add allo/allonet.lock
     git add allo/deps/alloui
-    git commit -m "bump allonet and alloui"
+    git add allo
+    git commit -m "bump allonet, alloui and assist"
     cd ..
     git add $APP
 done
