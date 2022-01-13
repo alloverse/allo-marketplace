@@ -37,3 +37,6 @@
 [submodule "apps/modelviewer"]
 	path = apps/allo-modelviewer
 	url = https://github.com/alloverse/allo-assets.git
+[submodule "apps/flynncade"]
+	path = apps/flynncade
+	url = https://github.com/alloverse/flynncade.git
