@@ -7,6 +7,7 @@ echo "all the apps work after bumping."
 echo
 echo
 
+echo "Upgrading assist and alloui in marketplace itself"
 ./allo/assist upgrade
 cd allo/deps/alloui
 git checkout main
@@ -30,7 +31,10 @@ done
 
 for APP in `ls`; do
     cd $APP
-    echo "Bumping alloui and allonet in $APP"
+    echo 
+    echo "#########################################"
+    echo "## Bumping alloui and allonet in $APP  ##"
+    echo "#########################################"
     git checkout -f main
     git pull
     git submodule sync
@@ -44,9 +48,14 @@ for APP in `ls`; do
     cd ../../..
     git add allo/allonet.lock
     git add allo/deps/alloui
-    git commit -m "bump allonet and alloui"
+    git commit -m "bump allonet and alloui" || true
     cd ..
     git add $APP
 done
 
 popd > /dev/null
+
+echo ""
+echo ""
+echo "!! Done! Now, test all the apps locally, then run push-apps,"
+echo "   and then commit and push here in marketplace."
