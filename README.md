@@ -12,12 +12,26 @@ in this repo.
 
 ## Utilities
 
-### `bootstrap.sh`
+### `scripts/bootstrap.sh`
 
 Run this to ./allo/assist fetch in all the apps. You need to do this to be able
 to start the apps.
 
-### `bump-apps.sh`
+### Upgrading apps and their dependencies
 
-Do a cd $app; git pull; cd ..; git add $app for every app in apps/, effectively
-updating them all to the latest version.
+There are three upgrade scripts, of varying levels:
+
+* `bash scripts/bump-apps.sh` pulls the latest commit in every app, but doesn't modify
+  the apps themselves
+* `bash scripts/upgrade-apps.sh` does that, plus fetches the latest allonet and alloui
+  in each, plus makes a commit for the upgrade (but doesn't push them)
+* `bash scripts/upgrade-assists.sh` does that, plus upgrades boot and assist too.
+
+How to use:
+
+1. Make sure your working copy of marketplace is completely clean
+2. Run the upgrade script of choice
+3. Test all the apps to make sure they work after
+4. If using second or third upgrade script: `bash scripts/push-apps.sh`
+5. `git commit -m 'bump all apps'`
+6. `git push`
