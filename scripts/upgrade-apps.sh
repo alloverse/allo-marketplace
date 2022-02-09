@@ -1,6 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
+echo "This script will bump alloui and allonet in all the apps, and make a commit."
+echo "IT WILL NOT PUSH THEM. Use the push-apps.sh script to push after verifying that"
+echo "all the apps work after bumping."
+echo
+echo
+
 ./allo/assist upgrade
 cd allo/deps/alloui
 git checkout main
@@ -8,7 +14,19 @@ git pull
 git submodule update --init --recursive
 cd ../../..
 
-pushd apps
+pushd apps > /dev/null
+
+for APP in `ls`; do
+    cd $APP
+    if [ -n "$(git status --porcelain)" ]; then 
+        echo
+        echo "!! Working copy for $APP is dirty, refusing to run."
+        cd ..
+        popd > /dev/null
+        exit 1
+    fi
+    cd ..
+done
 
 for APP in `ls`; do
     cd $APP
@@ -31,4 +49,4 @@ for APP in `ls`; do
     git add $APP
 done
 
-popd
+popd > /dev/null

@@ -1,7 +1,23 @@
 #!/bin/bash
 set -euo pipefail
 
-# Usage: update assist in jukebox, then run this script
+echo "Usage: update assist in jukebox, then run this script."
+echo "This script will bump copy assist, and bump alloui and allonet in all the apps,"
+echo "and make a commit."
+echo "IT WILL NOT PUSH THEM. Use the push-apps.sh script to push after verifying that"
+echo "all the apps work after bumping."
+
+
+for APP in `ls`; do
+    cd $APP
+    if [ -n "$(git status --porcelain)" ]; then 
+        echo "Working copy for $APP is dirty, refusing to run."
+        cd ..
+        popd > /dev/null
+        exit 1
+    fi
+    cd ..
+done
 
 cp apps/allo-jukebox/allo/assist allo/
 cp apps/allo-jukebox/allo/assist.lua allo/
@@ -14,7 +30,7 @@ git pull
 git submodule update --init --recursive
 cd ../../..
 
-pushd apps
+pushd apps > /dev/null
 
 for APP in `ls`; do
     cd $APP
@@ -41,4 +57,4 @@ for APP in `ls`; do
     git add $APP
 done
 
-popd
+popd > /dev/null
