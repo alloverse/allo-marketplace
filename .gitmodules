@@ -27,7 +27,7 @@
 	url = https://github.com/alloverse/allo-todo.git
 [submodule "apps/allo-cloud-generator"]
 	path = apps/allo-cloud-generator
-	url = https://github.com/dmjezewska/allo-cloud-generator
+	url = https://github.com/alloverse/allo-cloud-generator
 [submodule "apps/decorator"]
 	path = apps/allo-decorator
 	url = https://github.com/alloverse/allo-decorator.git
