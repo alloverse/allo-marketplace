@@ -45,7 +45,8 @@ app.assetManager:add(assets)
 
 class.AppView(ui.ProxyIconView)
 function AppView:_init(bounds, desc)
-    self:super(bounds, desc.meta.display_name, desc.icon)
+    local author = desc.meta.author or ""
+    self:super(bounds, desc.meta.display_name, author, desc.icon)
     self.desc = desc
 end
 
