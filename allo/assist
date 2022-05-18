@@ -34,6 +34,10 @@ do_run () {
     $LUAJIT "$HERE/boot.lua" "$HERE/.." $*
 }
 
+do_serve () {
+    python3 "$HERE/serve.py" $*
+}
+
 if [ "$#" -lt 1 ]; then
     do_help
     exit
@@ -45,6 +49,9 @@ case $1 in
     ;;
     fetch )
         do_fetch
+    ;;
+    serve )
+        do_serve ${2-}
     ;;
     run )
         if [ "$#" -lt 2 ]; then
