@@ -1,5 +1,5 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
-import threading, os, json, asyncio, subprocess
+import threading, os, json, asyncio, subprocess, json
 
 APPS_ROOT = os.getenv('APPS_ROOT')
 
@@ -15,16 +15,22 @@ class Handler(BaseHTTPRequestHandler):
             app_path = APPS_ROOT+'/'+app_name
 
         print(f"Booting app {app_name or ''} into {destination}...")
-        subprocess.Popen(
-            ["./allo/assist", "run", destination, launchargs],
-            cwd=app_path
-        )
-        # todo: reap it when it exits
-
-        # pls somehow capture avatar id
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write(bytes("{}", "utf-8"))
+        try:
+            subprocess.Popen(
+                ["./allo/assist", "run", destination, launchargs],
+                cwd=app_path
+            )
+            # todo: reap it when it exits
+            # pls somehow capture avatar id
+            avatar_id = "unknown"
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(bytes(json.dumps({"status": "ok", "avatar_id": avatar_id}), "utf-8"))
+        except Exception as e:
+            error = f"Failed to boot app: {e}"
+            self.send_response(502)
+            self.end_headers()
+            self.wfile.write(bytes(json.dumps({"error": error}), "utf-8"))
 
 def start_server(handler, port=8000):
     '''Start a simple webserver serving path on port'''
