@@ -21,10 +21,12 @@ local app = App(client)
 local apps = {}
 local p = io.popen('find apps/* -maxdepth 0')
 for appPath in p:lines() do
+    local shortname = string.gsub(appPath, "(.*/)(.*)", "%2")
     local infojsonstr = readfile(appPath.."/info.json")
     if infojsonstr then
         local desc = {
-            path=appPath,
+            shortname= shortname,
+            path= appPath,
             meta= json.decode(infojsonstr),
             icon= ui.Asset.File(appPath.."/icon.glb")
         }
@@ -51,9 +53,25 @@ function AppView:_init(bounds, desc)
 end
 
 function AppView:onIconDropped(pos)
-    local command = 'cd '..self.desc.path..'; ./allo/assist run '..arg[2]..' "'..tostring(pos)..'" &'
-    print("Launching app "..command)
-    os.execute(command)
+    print("Asking place to launch", self.desc.shortname)
+    pos._m = nil -- so it becomes json-valid
+    client:sendInteraction({
+        receiver_entity_id = "place",
+        body = {
+            "launch_app",
+            "alloapp:http://localhost:8000/"..self.desc.shortname,
+            {
+                initialLocation= pos
+            }
+        }
+    }, function(resp, body)
+        if body[2] ~= "ok" then
+            print("Failed to launch", self.desc.shortname, ":", resp.body)
+        else
+            print("Successfully launched", self.desc.shortname)
+        end
+    end)
+
     return true
 end
 

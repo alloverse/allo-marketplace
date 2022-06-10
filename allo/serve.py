@@ -6,7 +6,7 @@ APPS_ROOT = os.getenv('APPS_ROOT')
 class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         destination = self.headers.get("x-alloverse-server")
-        launchargs = self.headers.get("x-alloverse-launchargs") or "{}"
+        launchargs = self.body or "{}"
         app_name = self.path
 
         app_path = "." # by default, just launch current app
@@ -16,6 +16,8 @@ class Handler(BaseHTTPRequestHandler):
 
         print(f"Booting app {app_name or ''} into {destination}...")
         try:
+            if not destination:
+                raise Exception("missing destination")
             subprocess.Popen(
                 ["./allo/assist", "run", destination, launchargs],
                 cwd=app_path
@@ -25,9 +27,11 @@ class Handler(BaseHTTPRequestHandler):
             avatar_id = "unknown"
             self.send_response(200)
             self.end_headers()
+            print("Process launched.")
             self.wfile.write(bytes(json.dumps({"status": "ok", "avatar_id": avatar_id}), "utf-8"))
         except Exception as e:
             error = f"Failed to boot app: {e}"
+            print(error)
             self.send_response(502)
             self.end_headers()
             self.wfile.write(bytes(json.dumps({"error": error}), "utf-8"))
