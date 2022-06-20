@@ -6,7 +6,7 @@ APPS_ROOT = os.getenv('APPS_ROOT')
 class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         destination = self.headers.get("x-alloverse-server")
-        launchargs = self.body or "{}"
+        launchargs = "{}"
         app_name = self.path
 
         app_path = "." # by default, just launch current app
@@ -14,13 +14,18 @@ class Handler(BaseHTTPRequestHandler):
             # if serving many apps, pick the app based on root and given name
             app_path = APPS_ROOT+'/'+app_name
 
-        print(f"Booting app {app_name or ''} into {destination}...")
+        print(f"Booting app {app_path or ''} into {destination}...")
         try:
+            content_len = int(self.headers.get('Content-Length'))
+            launchargs = self.rfile.read(content_len)
+            sub_env = os.environ.copy()
+            sub_env["ALLO_APP_BOOT_ARGS"] = launchargs
             if not destination:
                 raise Exception("missing destination")
             subprocess.Popen(
-                ["./allo/assist", "run", destination, launchargs],
-                cwd=app_path
+                ["./allo/assist", "run", destination],
+                cwd=app_path,
+                env=sub_env
             )
             # todo: reap it when it exits
             # pls somehow capture avatar id
