@@ -10,6 +10,19 @@ and they'll automatically show up in Marketplace.
 Until that functionality exists, apps need to be submoduled into the apps/ directory
 in this repo.
 
+In this configuration, the `serve` script MUST run on the same machine as Marketplace
+like so:
+
+```
+    env APPS_ROOT=./apps/ python3 allo/serve.py
+```
+
+and in another terminal tab, start Marketplace into the server where you want it:
+
+```
+    ./allo/assist run alloplace://sandbox.places.alloverse.com
+```
+
 ## Utilities
 
 ### `scripts/bootstrap.sh`
@@ -29,7 +42,7 @@ There are three upgrade scripts, of varying levels:
 
 How to use:
 
-1. Make sure your working copy of marketplace is completely clean
+1. Make sure your working copy of marketplace and all its submodules are completely clean
 2. Run the upgrade script of choice
 3. Test all the apps to make sure they work after
 4. If using second or third upgrade script: `bash scripts/push-apps.sh`
