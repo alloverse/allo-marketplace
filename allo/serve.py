@@ -28,18 +28,16 @@ class Handler(BaseHTTPRequestHandler):
                 env=sub_env
             )
             # todo: reap it when it exits
-            # pls somehow capture avatar id
-            avatar_id = "unknown"
             self.send_response(200)
             self.end_headers()
             print("Process launched.")
-            self.wfile.write(bytes(json.dumps({"status": "ok", "avatar_id": avatar_id}), "utf-8"))
+            self.wfile.write(bytes(json.dumps({"status": "ok"}), "utf-8"))
         except Exception as e:
             error = f"Failed to boot app: {e}"
             print(error)
             self.send_response(502)
             self.end_headers()
-            self.wfile.write(bytes(json.dumps({"error": error}), "utf-8"))
+            self.wfile.write(bytes(json.dumps({"status": "error", "error": error}), "utf-8"))
 
 def start_server(handler, port=8000):
     '''Start a simple webserver serving path on port'''

@@ -68,7 +68,7 @@ function AppView:onIconDropped(pos)
         if body[2] ~= "ok" then
             print("Failed to launch", self.desc.shortname, ":", resp.body)
         else
-            print("Successfully launched", self.desc.shortname)
+            print("Successfully launched", self.desc.shortname, "with avatar ID", body[3])
         end
     end)
 
