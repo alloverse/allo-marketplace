@@ -6,6 +6,7 @@ APPS_ROOT = os.getenv('APPS_ROOT')
 class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         destination = self.headers.get("x-alloverse-server")
+        identity = self.headers.get("x-alloverse-identity")
         launchargs = "{}"
         app_name = self.path
 
@@ -20,6 +21,7 @@ class Handler(BaseHTTPRequestHandler):
             launchargs = self.rfile.read(content_len)
             sub_env = os.environ.copy()
             sub_env["ALLO_APP_BOOT_ARGS"] = launchargs
+            sub_env["ALLO_APP_BOOTED_BY_IDENTITY"] = identity
             if not destination:
                 raise Exception("missing destination")
             subprocess.Popen(
