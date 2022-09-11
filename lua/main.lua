@@ -45,6 +45,28 @@ assets = {
 }
 app.assetManager:add(assets)
 
+class.ErrorBezel(ui.Surface)
+function ErrorBezel:_init(bounds, errstr)
+    local errorDuration = 3.0
+    self:super(bounds)
+    self:setColor({0.8, 0.4, 0.4, 1.0})
+    self:addSubview(ui.Label{
+        bounds=ui.Bounds{size=bounds.size},
+        color={0,0,0,1},
+        text=errstr
+    })
+    self:doWhenAwake(function()
+        ui.StandardAnimations.addFailureAnimation(self, 0.1)
+        self.app:scheduleAction(errorDuration, false, function()
+            ui.StandardAnimations.addScaleOut(self, 0.2)
+            --elf:removeFromSuperview()
+        end)
+        self.app:scheduleAction(errorDuration + 0.3, false, function()
+            self:removeFromSuperview()
+        end)
+    end)
+end
+
 class.AppView(ui.ProxyIconView)
 function AppView:_init(bounds, desc)
     local author = desc.meta.author or ""
@@ -53,20 +75,33 @@ function AppView:_init(bounds, desc)
 end
 
 function AppView:onIconDropped(pos)
-    print("Asking place to launch", self.desc.shortname)
-    pos._m = nil -- so it becomes json-valid
+    local appurl = "alloapp:http://localhost:8000/"..self.desc.shortname
+    print("Asking place to launch", appurl)
+    local jsonPos = mat4(pos)
+    jsonPos._m = nil -- so it becomes json-valid
     client:sendInteraction({
         receiver_entity_id = "place",
         body = {
             "launch_app",
-            "alloapp:http://localhost:8000/"..self.desc.shortname,
+            appurl,
             {
-                initialLocation= pos
+                initialLocation= jsonPos
             }
         }
     }, function(resp, body)
         if body[2] ~= "ok" then
             print("Failed to launch", self.desc.shortname, ":", resp.body)
+            local errstr = "unknown error"
+            if resp.body then errstr = body[3] end
+            local ok, jsonerr = pcall(json.decode, errstr)
+            if ok and jsonerr and jsonerr["error"] then
+                errstr = jsonerr["error"]
+            end
+            local bezel = ErrorBezel(
+                ui.Bounds{pose=ui.Pose(pos), size=ui.Size(1.5, 0.07, 0.01)},
+                errstr
+            )
+            self.app:addRootView(bezel)
         else
             print("Successfully launched", self.desc.shortname, "with avatar ID", body[3])
         end
