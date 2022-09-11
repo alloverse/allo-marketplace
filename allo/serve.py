@@ -1,12 +1,12 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
-import threading, os, json, asyncio, subprocess, json
+import threading, os, json, asyncio, subprocess, json, traceback
 
 APPS_ROOT = os.getenv('APPS_ROOT')
 
 class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         destination = self.headers.get("x-alloverse-server")
-        identity = self.headers.get("x-alloverse-identity")
+        identity = self.headers.get("x-alloverse-launched-by")
         launchargs = "{}"
         app_name = self.path
 
@@ -24,6 +24,8 @@ class Handler(BaseHTTPRequestHandler):
             sub_env["ALLO_APP_BOOTED_BY_IDENTITY"] = identity
             if not destination:
                 raise Exception("missing destination")
+            if not launchargs or not identity:
+                raise Exception("missing launchargs or identity")
             subprocess.Popen(
                 ["./allo/assist", "run", destination],
                 cwd=app_path,
@@ -37,6 +39,7 @@ class Handler(BaseHTTPRequestHandler):
         except Exception as e:
             error = f"Failed to boot app: {e}"
             print(error)
+            traceback.print_exc()
             self.send_response(502)
             self.end_headers()
             self.wfile.write(bytes(json.dumps({"status": "error", "error": error}), "utf-8"))
