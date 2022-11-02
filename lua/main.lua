@@ -76,34 +76,13 @@ end
 
 function AppView:onIconDropped(pos)
     local appurl = "alloapp:http://localhost:8000/"..self.desc.shortname
-    print("Asking place to launch", appurl)
-    local jsonPos = mat4(pos)
-    jsonPos._m = nil -- so it becomes json-valid
-    client:sendInteraction({
-        receiver_entity_id = "place",
-        body = {
-            "launch_app",
-            appurl,
-            {
-                initialLocation= jsonPos
-            }
-        }
-    }, function(resp, body)
-        if body[2] ~= "ok" then
-            print("Failed to launch", self.desc.shortname, ":", resp.body)
-            local errstr = "unknown error"
-            if resp.body then errstr = body[3] end
-            local ok, jsonerr = pcall(json.decode, errstr)
-            if ok and jsonerr and jsonerr["error"] then
-                errstr = jsonerr["error"]
-            end
+    client:launchApp(appurl, ui.Pose(pos), {}, function(ok, errOrId)
+        if not ok then
             local bezel = ErrorBezel(
                 ui.Bounds{pose=ui.Pose(pos), size=ui.Size(1.5, 0.07, 0.01)},
-                errstr
+                errOrId
             )
             self.app:addRootView(bezel)
-        else
-            print("Successfully launched", self.desc.shortname, "with avatar ID", body[3])
         end
     end)
 
