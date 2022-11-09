@@ -100,7 +100,6 @@ local mainView = Frame(
         :move(-3, 1.6, 0.5),
     0.03
 )
-mainView.grabbable = true
 mainView:setColor(ui.Color.alloDarkPink())
 
 local titleLabel = mainView:addSubview(ui.Label{
